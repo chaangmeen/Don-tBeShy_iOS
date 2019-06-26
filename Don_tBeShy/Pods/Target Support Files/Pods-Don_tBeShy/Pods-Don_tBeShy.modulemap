@@ -1,0 +1,6 @@
+framework module Pods_Don_tBeShy {
+  umbrella header "Pods-Don_tBeShy-umbrella.h"
+
+  export *
+  module * { export * }
+}
