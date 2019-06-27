@@ -12,6 +12,8 @@ import NVActivityIndicatorView
 import Alamofire
 import SwiftyJSON
 
+
+
 class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
     @IBOutlet weak var yearLabel: UILabel!
@@ -21,13 +23,14 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     private let presentingIndicatorTypes = {
         return NVActivityIndicatorType.allCases.filter { $0 != .blank }
     }()
-
     
     var dateStart = Date()
     var dateEnd = Date()
     var defaultSelectDate = Date()
     var dayCategory = ""
     var today = Date()
+    var entireDates : [DateData] = []
+    var periodDates : [Date] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +39,49 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         calendarDefaultSetting()
         calendar.today = today
         showIndicator()
+        getPeriod { result in
+            for (_,sub) : (String,JSON) in result {
+                
+                let dateString = sub["date"].stringValue
+                let state = sub["state"].intValue
+                self.processingData(dateString: dateString)
+                self.entireDates.append(DateData(state: state, date: dateString, buttonStatus: 1))
+                self.selectPeriodDates(dates: self.periodDates)
+                self.calendar.reloadData()
 
+            }
+        }
         // Do any additional setup after loading the view.
+    }
+    
+    func processingData(dateString: String) {
+        let subString = String(dateString[0..<10]!)
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let date : Date = dateFormatter.date(from: subString)!
+        let returnDate = date.addingTimeInterval(3600*24)
+        periodDates.append(returnDate)
+    }
+    
+    func getPeriod(completion : @escaping (JSON) -> Void ) {
+        
+        let param : Parameters = ["id":"kmw811", "year":"2019", "month":"6"]
+        
+        Alamofire.request("http://10.10.2.137:3000/calendar", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseJSON { response in
+            switch response.result {
+            case .success:
+                self.stopAnimating(nil)
+                if let dataFromString = response.result.value {
+                    let json = JSON(dataFromString)
+                    completion(json)
+                }
+            case .failure:
+                self.stopAnimating(nil)
+                print("실패")
+            }
+        }
         
     }
     
@@ -45,16 +89,9 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         let size = CGSize(width: 30, height: 30)
         let indicatorType = presentingIndicatorTypes[1]
         
-        startAnimating(size, message: "Loading...", type: indicatorType, fadeInAnimation: nil)
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
-//            NVActivityIndicatorPresenter.sharedInstance.setMessage("Authenticating...")
-//        }
-//
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
-//            self.stopAnimating(nil)
-//        }
+        startAnimating(size, message: "기다려 주세요..", type: indicatorType, fadeInAnimation: nil)
+ 
     }
-    
     
     func initLabelSetting() {
         yearLabel.text = defaultSelectDate.year
@@ -81,17 +118,37 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
 }
 
-extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource {
+extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource, FSCalendarDelegateAppearance {
     
     func calendarDefaultSetting() {
+        
+        calendar.allowsMultipleSelection = true
         calendar.formatter.locale = Locale(identifier: "ko_kr")
         calendar.formatter.timeZone = TimeZone(abbreviation: "KST")
         calendar.locale = Locale(identifier: "ko_kr")
         calendar.appearance.headerDateFormat = "yyyy MMM"
         calendar.appearance.headerTitleColor = UIColor(hex: 0xFB5F26)
         calendar.appearance.weekdayTextColor = UIColor(hex: 0xfb9926)
-        calendar.appearance.selectionColor = UIColor(red:0.97, green:0.76, blue:0.14, alpha:1.0)
+        calendar.appearance.selectionColor = UIColor.white
         calendar.appearance.headerMinimumDissolvedAlpha = 0.0
+    }
+    
+    func selectPeriodDates( dates : [Date]) {
+        
+        self.calendar.appearance.selectionColor = .red
+        
+        dates.forEach { (date) in
+            self.calendar.select(date, scrollToDate: false)
+        }
+        
+
+    }
+    
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillSelectionColorFor date: Date) -> UIColor? {
+        if periodDates.contains(date) {
+            return .orange
+        }
+        return UIColor.red
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
@@ -99,20 +156,10 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource {
         self.providesPresentationContextTransitionStyle = true
         self.performSegue(withIdentifier: "modalView", sender: self)
         
-
-        //        yearLabel.text = date.year
-        //        dateLabel.text = "\(date.month)월 \(date.day)일 (\(date.weekday))"
-        
-        if dayCategory == "start" {
-            dateStart = date
-        } else {
-            dateEnd = date
-        }
-
     }
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-  
+        
         return true
     }
     
@@ -122,6 +169,8 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource {
             if date == today {
                 return "Today"
             }
+        } else {
+            
         }
         return nil
     }
