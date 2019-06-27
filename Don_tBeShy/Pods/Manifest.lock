@@ -1,3 +1,34 @@
-PODFILE CHECKSUM: 35228547b6a3183bec358924d7f82b3b044f54c4
+PODS:
+  - Alamofire (4.8.2)
+  - FSCalendar (2.8.0)
+  - NVActivityIndicatorView (4.7.0):
+    - NVActivityIndicatorView/Presenter (= 4.7.0)
+  - NVActivityIndicatorView/Presenter (4.7.0)
+  - RAMAnimatedTabBarController (5.0.0)
+  - SwiftyJSON (5.0.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.5)
+  - FSCalendar
+  - NVActivityIndicatorView
+  - RAMAnimatedTabBarController
+  - SwiftyJSON
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - FSCalendar
+    - NVActivityIndicatorView
+    - RAMAnimatedTabBarController
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  FSCalendar: 3a5ed3636e2ba1b83ebebfcf0c2603105a6f5efe
+  NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
+  RAMAnimatedTabBarController: 6736db7bec2ec74d64059ee9cb40cb9bd281338e
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+
+PODFILE CHECKSUM: 8bc0bccf342c9a22c469ad265ca23010f471bd0f
 
 COCOAPODS: 1.5.3
