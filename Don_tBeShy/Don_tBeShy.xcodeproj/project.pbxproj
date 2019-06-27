@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7619481F22C5486600A1A170 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7619481E22C5486600A1A170 /* Timer.swift */; };
 		76B5DCED22C4453B009A55CA /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76B5DCEC22C4453B009A55CA /* DetailViewController.swift */; };
 		76B5DCF122C46C11009A55CA /* CalendarView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76B5DCF022C46C11009A55CA /* CalendarView.storyboard */; };
 		76B5DCF322C47912009A55CA /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76B5DCF222C47912009A55CA /* CalendarViewController.swift */; };
@@ -26,6 +27,7 @@
 /* Begin PBXFileReference section */
 		0923625B667BF2BF2684F488 /* Pods-Don_tBeShy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Don_tBeShy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Don_tBeShy/Pods-Don_tBeShy.release.xcconfig"; sourceTree = "<group>"; };
 		19FBC66EEA40502A0B9A62BE /* Pods_Don_tBeShy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Don_tBeShy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7619481E22C5486600A1A170 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		76B5DCEC22C4453B009A55CA /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		76B5DCF022C46C11009A55CA /* CalendarView.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CalendarView.storyboard; sourceTree = "<group>"; };
 		76B5DCF222C47912009A55CA /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				76BEF87B22C3EE1600A879FD /* SelectSexThingViewController.swift */,
 				76B5DCF222C47912009A55CA /* CalendarViewController.swift */,
 				76B5DCF622C485B1009A55CA /* ModalViewController.swift */,
+				7619481E22C5486600A1A170 /* Timer.swift */,
 				76B5DCF422C47949009A55CA /* CalendarExtension.swift */,
 				76B5DCFA22C4AFD5009A55CA /* StringExtension.swift */,
 				76BEF87022C3C96700A879FD /* Assets.xcassets */,
@@ -258,6 +261,7 @@
 				76B5DCF322C47912009A55CA /* CalendarViewController.swift in Sources */,
 				76BEF87F22C3F41000A879FD /* RoundView.swift in Sources */,
 				76BEF86A22C3C96600A879FD /* AppDelegate.swift in Sources */,
+				7619481F22C5486600A1A170 /* Timer.swift in Sources */,
 				76BEF87C22C3EE1600A879FD /* SelectSexThingViewController.swift in Sources */,
 				76B5DCED22C4453B009A55CA /* DetailViewController.swift in Sources */,
 				76B5DCFB22C4AFD5009A55CA /* StringExtension.swift in Sources */,
