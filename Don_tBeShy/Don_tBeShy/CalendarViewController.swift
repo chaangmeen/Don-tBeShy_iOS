@@ -8,12 +8,18 @@
 
 import UIKit
 import FSCalendar
+import NVActivityIndicatorView
 
-class CalendarViewController: UIViewController {
+class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
     @IBOutlet weak var yearLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var calendar: FSCalendar!
+    
+    private let presentingIndicatorTypes = {
+        return NVActivityIndicatorType.allCases.filter { $0 != .blank }
+    }()
+
     
     var dateStart = Date()
     var dateEnd = Date()
@@ -26,10 +32,26 @@ class CalendarViewController: UIViewController {
         calendar.delegate = self
         calendar.dataSource = self
         calendarDefaultSetting()
-        //initLabelSetting()
         calendar.today = today
+        showIndicator()
         // Do any additional setup after loading the view.
+        
     }
+    
+    func showIndicator() {
+        let size = CGSize(width: 30, height: 30)
+        let indicatorType = presentingIndicatorTypes[1]
+        
+        startAnimating(size, message: "Loading...", type: indicatorType, fadeInAnimation: nil)
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
+//            NVActivityIndicatorPresenter.sharedInstance.setMessage("Authenticating...")
+//        }
+//
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+//            self.stopAnimating(nil)
+//        }
+    }
+    
     
     func initLabelSetting() {
         yearLabel.text = defaultSelectDate.year
@@ -49,7 +71,7 @@ class CalendarViewController: UIViewController {
     @IBAction func setAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
-
+    
     @IBAction func cancelAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
@@ -71,8 +93,8 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource {
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         
-//        yearLabel.text = date.year
-//        dateLabel.text = "\(date.month)월 \(date.day)일 (\(date.weekday))"
+        //        yearLabel.text = date.year
+        //        dateLabel.text = "\(date.month)월 \(date.day)일 (\(date.weekday))"
         
         if dayCategory == "start" {
             dateStart = date

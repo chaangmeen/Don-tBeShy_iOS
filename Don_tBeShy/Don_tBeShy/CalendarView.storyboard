@@ -13,7 +13,7 @@
         <!--Calendar View Controller-->
         <scene sceneID="iU9-lh-omu">
             <objects>
-                <viewController id="rzd-4W-m0s" customClass="CalendarViewController" customModule="ManageParkingBrother" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="rzd-4W-m0s" customClass="CalendarViewController" customModule="Don_tBeShy" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OHT-R0-3TE">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -181,7 +181,7 @@
         <!--Calendar View Controller-->
         <scene sceneID="ThT-fV-KRX">
             <objects>
-                <viewController id="vWQ-Ja-Zwk" customClass="CalendarViewController" customModule="ManageParkingBrother" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vWQ-Ja-Zwk" customClass="CalendarViewController" customModule="Don_tBeShy" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qF3-Qa-3VJ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

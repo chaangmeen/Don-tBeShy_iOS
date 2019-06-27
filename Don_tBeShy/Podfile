@@ -10,7 +10,7 @@ target 'Don_tBeShy' do
   pod 'NVActivityIndicatorView'
   pod "Alamofire", "~> 4.5"
   pod 'FSCalendar'
-
+  pod 'NVActivityIndicatorView'
 
   # Pods for Don_tBeShy
 
