@@ -20,10 +20,14 @@ class ModalViewController: UIViewController {
     let orangeColor = UIColor(hex: 0xFB9926)
     let grayColor = UIColor(hex:0xA0A0A0)
     
+    var selectDay = Date()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(selectDay)
         // Do any additional setup after loading the view.
     }
+    
     
     @IBAction func periodStart(_ sender: Any) {
         //end button background
@@ -50,13 +54,15 @@ class ModalViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    
+    
     @IBAction func dismissAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func confirmAction(_ sender: Any) {
         //생리  시작 , 끝  통신할 것 .
-        
     }
+    
     
 }

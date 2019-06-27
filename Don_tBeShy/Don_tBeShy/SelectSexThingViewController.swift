@@ -9,9 +9,7 @@
 import UIKit
 
 class SelectSexThingViewController: UIViewController {
-    
     @IBOutlet weak var condomView: UIView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setTouchSetting()
@@ -19,7 +17,7 @@ class SelectSexThingViewController: UIViewController {
     }
     
     func setTouchSetting() {
-        
+
         condomView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(goDetailView))
         tap.numberOfTapsRequired = 1
@@ -30,7 +28,6 @@ class SelectSexThingViewController: UIViewController {
     @objc func goDetailView() {
         self.performSegue(withIdentifier: "toDetail", sender: self)
     }
-    
 
     /*
     // MARK: - Navigation

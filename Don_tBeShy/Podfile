@@ -12,6 +12,7 @@ target 'Don_tBeShy' do
   pod 'FSCalendar'
   pod 'NVActivityIndicatorView'
   pod 'RAMPaperSwitch' 
-  # Pods for Don_tBeShy
+  pod 'Socket.IO-Client-Swift', '~> 15.1.0'
+   # Pods for Don_tBeShy
 
 end
