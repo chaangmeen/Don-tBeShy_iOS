@@ -5,6 +5,7 @@ PODS:
     - NVActivityIndicatorView/Presenter (= 4.7.0)
   - NVActivityIndicatorView/Presenter (4.7.0)
   - RAMAnimatedTabBarController (5.0.0)
+  - RAMPaperSwitch (3.1.0)
   - SwiftyJSON (5.0.0)
 
 DEPENDENCIES:
@@ -12,6 +13,7 @@ DEPENDENCIES:
   - FSCalendar
   - NVActivityIndicatorView
   - RAMAnimatedTabBarController
+  - RAMPaperSwitch
   - SwiftyJSON
 
 SPEC REPOS:
@@ -20,6 +22,7 @@ SPEC REPOS:
     - FSCalendar
     - NVActivityIndicatorView
     - RAMAnimatedTabBarController
+    - RAMPaperSwitch
     - SwiftyJSON
 
 SPEC CHECKSUMS:
@@ -27,8 +30,9 @@ SPEC CHECKSUMS:
   FSCalendar: 3a5ed3636e2ba1b83ebebfcf0c2603105a6f5efe
   NVActivityIndicatorView: b19ddab2576f805cbe0fb2306cba3476e09a1dea
   RAMAnimatedTabBarController: 6736db7bec2ec74d64059ee9cb40cb9bd281338e
+  RAMPaperSwitch: 4ab6358e37cc90060693f10fb60fb6b73f6492c3
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
-PODFILE CHECKSUM: b334d8c33ac2bf2432013e188e8f23340d5e00f0
+PODFILE CHECKSUM: 5d5680b3c8c1be77626f06b458db7ad6506440dc
 
 COCOAPODS: 1.5.3

@@ -11,7 +11,7 @@ target 'Don_tBeShy' do
   pod "Alamofire", "~> 4.5"
   pod 'FSCalendar'
   pod 'NVActivityIndicatorView'
-
+  pod 'RAMPaperSwitch' 
   # Pods for Don_tBeShy
 
 end

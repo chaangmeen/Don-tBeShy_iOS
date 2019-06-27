@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "988728DFFB24AE0622EDF0716D260072"
-               BlueprintName = "SwiftyJSON"
+               BlueprintIdentifier = "BA55B0FFC02B3547A56C43C3AD0ED571"
+               BlueprintName = "RAMPaperSwitch"
                ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "SwiftyJSON.framework">
+               BuildableName = "RAMPaperSwitch.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
