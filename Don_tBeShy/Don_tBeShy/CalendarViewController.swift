@@ -8,6 +8,8 @@
 
 import UIKit
 import FSCalendar
+import Alamofire
+import SwiftyJSON
 
 class CalendarViewController: UIViewController {
     
@@ -26,8 +28,8 @@ class CalendarViewController: UIViewController {
         calendar.delegate = self
         calendar.dataSource = self
         calendarDefaultSetting()
-        //initLabelSetting()
         calendar.today = today
+        
         // Do any additional setup after loading the view.
     }
     
@@ -70,39 +72,30 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource {
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        self.definesPresentationContext = true
+        self.providesPresentationContextTransitionStyle = true
+        self.performSegue(withIdentifier: "modalView", sender: self)
         
 //        yearLabel.text = date.year
 //        dateLabel.text = "\(date.month)월 \(date.day)일 (\(date.weekday))"
-        
-        if dayCategory == "start" {
-            dateStart = date
-        } else {
-            dateEnd = date
-        }
+//
+//        if dayCategory == "start" {
+//            dateStart = date
+//        } else {
+//            dateEnd = date
+//        }
     }
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-        
-        if dayCategory == "start" {
-            if dateEnd.compare(date) == .orderedAscending {
-                return false
-            }
-        }
-        if dayCategory == "end"{
-            if dateStart.compare(date) == .orderedDescending {
-                return false
-            }
-        }
+  
         return true
     }
     
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
+        
         if let today = calendar.today {
             if date == today {
-                if dayCategory == "end"{
-                    return "시작일"} else {
-                    return "끝일"
-                }
+                return "Today"
             }
         }
         return nil
