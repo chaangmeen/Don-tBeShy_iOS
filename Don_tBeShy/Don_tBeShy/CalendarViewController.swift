@@ -18,36 +18,14 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var calendar: FSCalendar!
     @IBOutlet weak var sexButton: UIButton!
+    @IBOutlet weak var refreshButton: UIButton!
+    @IBOutlet weak var sexLabel: UILabel!
+    
     var isTimerRunning = false
     var seconds = 10
     var timer = Timer()
     var selectDate: Date?
-    var sexState : Int = 0 {
-        willSet(newVal){
-            //myProperty의 값이 변경되기 직전에 호출, newVal은 변경 될 새로운 값
-            switch newVal {
-            case 0:
-           
-                self.sexButton.isEnabled = true
-
-            case 1:
-                
-                    self.sexButton.isEnabled = false
-            case 2:
-                self.sexButton.isEnabled = true
-            case 3:
-                
-                // 뭐든 띄어줘야함
-                // 알러트
-                // 통신
-                
-                self.sexAlert(title: "sex", message: "할수 있다.")
-                self.sexButton.isEnabled = true
-            default:
-                return
-            }
-        }
-    }
+    var sexState : Int = 0
     
     
     private let presentingIndicatorTypes = {
@@ -56,6 +34,7 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
     var dateStart = Date()
     var dateEnd = Date()
+    
     var defaultSelectDate = Date()
     var dayCategory = ""
     var today = Date()
@@ -64,46 +43,49 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     var entireDates : [DateData] = [] // 전체 날 모음
     var periodDates : [Date] = []// 생리 한 날 모음
     var sexDates : [Date] = []// 관계 가진 날
-    var userID = ""
+    var wrongSexDates : [Date] = []
+    var userID = "kmw811"
     let beforeColor = UIColor(hex: 0xF3FFCB)
     let afterSendColor = UIColor(hex: 0xFFE7C6)
     let afterReceiveColor = UIColor(hex:0xFFCBCB )
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showAlert(title: "선택", message: "예 => aaaa , 아니요 => kwm811")
+        //showAlert(title: "선택", message: "예 => aaaa , 아니요 => kwm811")
         calendar.delegate = self
         calendar.dataSource = self
         calendarDefaultSetting()
-        calendar.today = today
-        
+        calendar.today = dateEnd
         //지워야한다.
-        self.calendar.allowsMultipleSelection = false
         
         // Do any additional setup after loading the view.
     }
   
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setPeriod()
+    }
+    
+    
     func setPeriod() {
-     
-        if UserDefaults.standard.bool(forKey: "bool") {
-            self.userID = "kmw811"
-        } else {
-            self.userID = "aaaa"
-        }
+
         print(" \(userID) 보낼때 status : \(sexState)")
         
-        //showIndicator()
+        showIndicator()
         
         getPeriod { result in
             print(result)
             for (_,sub) : (String,JSON) in result {
                 let dateString = sub["date"].stringValue
                 let state = sub["state"].intValue
-                if state == 1 {
+                if state == 3 {
                     self.processingSexData(dataString: dateString)
                 }
                 if state == 2 {
                     self.processingPeriodData(dateString: dateString)
+                }
+                if state == 4 {
+                    self.processingUnSaftySexData(dataString: dateString)
                 }
                 self.entireDates.append(DateData(state: state, date: dateString, buttonStatus: state))
                 self.calendar.reloadData()
@@ -118,6 +100,13 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         getBtnStatus { json in
             self.sexState = json["state"].intValue
         }
+    }
+    
+    @IBAction func refreshAction(_ sender: Any) {
+        
+        refreshButton.transform = refreshButton.transform.rotated(by: CGFloat(M_PI_2))
+        
+        setBtn()
     }
     
     func processingPeriodData(dateString: String) {
@@ -135,7 +124,14 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         let date : Date = dateFormatter.date(from: subString)!
         sexDates.append(date)
     }
-
+    
+    func processingUnSaftySexData(dataString: String) {
+        let subString = String(dataString[0..<10]!)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let date : Date = dateFormatter.date(from: subString)!
+        wrongSexDates.append(date)
+    }
     
     func getPeriod(completion : @escaping (JSON) -> Void ) {
         
@@ -157,8 +153,11 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
     func getBtnStatus( completion : @escaping (JSON) -> Void) {
         
-        let param : Parameters = ["id":"\(self.userID)", "year":"2019", "month":"6"]
+        let month = calendar.today?.month
+        print(month)
         
+        let param : Parameters = ["id":"\(self.userID)", "year":"2019", "month":"6"]
+        showIndicator()
         Alamofire.request("http://10.10.2.137:3000/btn", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseJSON { response in
             switch response.result {
             case .success:
@@ -175,34 +174,25 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     }
     
     @IBAction func sexAction(_ sender: Any) {
+        
+        if let imageView = sexButton.imageView {
+            if let image = imageView.image {
+                if image == UIImage(named: "beforeSend") {
+                    sexButton.setImage(UIImage(named: "afterSend"), for: .normal)
+                } else {
+                    sexButton.setImage(UIImage(named: "beforeSend"), for: .normal)
+                }
+            }
+        }
         sendSexAction(completion: { json in
             print(json)
         })
     }
-    
-    func whenSendSexStatus (state : Int) {
-        
-        switch state {
-        case 0:
-            // 기본 상태에서 섹스하고싶다!
-            self.sexState = 1
-        case 2:
-            // 받은상태에서 나도 하고싶다!
-            self.sexState = 3
-        case 3:
-            // 내가 보냇는데 상대도 보냈다. 그럼 뭐 띄어야한다.
-            // 둘다 하고싶을때  확인누르고 , 그냥 4를 보내준다.
-            self.sexState = 4
-        default:
-            return
-        }
-    }
+
     
     
     func sendSexAction( completion : @escaping (JSON)-> Void) {
         
-        
-        whenSendSexStatus(state: self.sexState)
         print(" \(userID) 보낼때 status : \(sexState)")
         
         let param : Parameters = ["id":"\(userID)", "state":"\(self.sexState)"]
@@ -222,18 +212,12 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         }
     }
     
-    
     func showIndicator() {
         let size = CGSize(width: 30, height: 30)
         let indicatorType = presentingIndicatorTypes[1]
         startAnimating(size, message: "기다려 주세요..", type: indicatorType, fadeInAnimation: nil)
     }
-    
-    func initLabelSetting() {
-        yearLabel.text = defaultSelectDate.year
-        dateLabel.text = "\(defaultSelectDate.month)월 \(defaultSelectDate.day)일 (\(defaultSelectDate.weekday))"
-    }
-    
+
     @IBAction func leftSwipeButton(_ sender: Any) {
         let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: calendar.currentPage)
         calendar.setCurrentPage(previousMonth!, animated: true)
@@ -268,10 +252,8 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default, handler: { _ in
             UserDefaults.standard.set(true, forKey: "bool")
             //self.setPeriod()
-            //self.runTimer()
             
         })
-        
         let cancelAction = UIAlertAction(title: "취소", style: UIAlertAction.Style.cancel, handler: { _ in
             UserDefaults.standard.set(false, forKey: "bool")
             //self.setPeriod()
@@ -290,7 +272,6 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
             print("확인후")
             self.setPeriod()
         })
-
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -299,7 +280,6 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
 extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource, FSCalendarDelegateAppearance {
     
     func calendarDefaultSetting() {
-        
         calendar.allowsMultipleSelection = true
         calendar.formatter.locale = Locale(identifier: "ko_kr")
         calendar.formatter.timeZone = TimeZone(abbreviation: "KST")
@@ -312,26 +292,13 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource, FS
         calendar.appearance.headerMinimumDissolvedAlpha = 0.0
     }
     
-    func selectPeriodDates( dates : [Date]) {
-        self.calendar.appearance.selectionColor = .red
-        dates.forEach { (date) in
-            self.calendar.select(date, scrollToDate: false)
-        }
-    }
-    
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
-        if periodDates.contains(date) {
-            return .orange
-        }
+
         return nil
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        
-        let returnDate = date.addingTimeInterval(3600*24)
-        
-        self.selectDate = returnDate
-        
+        self.selectDate = date
         self.definesPresentationContext = true
         self.providesPresentationContextTransitionStyle = true
         self.performSegue(withIdentifier: "modalView", sender: self)
@@ -342,19 +309,19 @@ extension CalendarViewController : FSCalendarDelegate , FSCalendarDataSource, FS
         if dateStart.compare(date) == .orderedAscending {
             return false
         }
-        
         return true
     }
+    
     
     func calendar(_ calendar: FSCalendar, imageFor date: Date) -> UIImage? {
         
         if periodDates.contains(date) {
             return UIImage(named: "blood")
-
         } else if sexDates.contains(date) {
-            return sexDates.contains(date) ? UIImage(named: "sexDay") : nil
+            return sexDates.contains(date) ? UIImage(named: "heart1") : nil
+        } else if wrongSexDates.contains(date) {
+            return UIImage(named: "heart2")
         }
-        
         return nil
     }
     

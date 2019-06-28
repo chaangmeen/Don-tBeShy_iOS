@@ -34,7 +34,6 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd"
         dateFormatter.locale = Locale(identifier: "ko_kr")
-        //dateFormatter.timeZone = TimeZone(abbreviation: "KST")
         return dateFormatter.string(from: self)
     }
     
@@ -44,6 +43,7 @@ extension Date {
         dateFormatter.dateFormat = "E"
         dateFormatter.locale = Locale(identifier: "ko_kr")
         return dateFormatter.string(from: self)
+        
     }
     
     var time : String {

@@ -9,8 +9,9 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import NVActivityIndicatorView
 
-class ModalViewController: UIViewController {
+class ModalViewController: UIViewController, NVActivityIndicatorViewable {
 
     @IBOutlet weak var settingView: UIView!
     @IBOutlet weak var sexLabel: UILabel!
@@ -22,19 +23,26 @@ class ModalViewController: UIViewController {
     @IBOutlet weak var safeBtn: UIButton!
     @IBOutlet weak var unSafeBtn: UIButton!
     
-    let orangeColor = UIColor(hex: 0xFB9926)
+    let pinkColor = UIColor(hex: 0xE6287B)
     let grayColor = UIColor(hex:0xA0A0A0)
     
     var selectDay = Date()
     var userID = ""
     var type = 1
+    
+    private let presentingIndicatorTypes = {
+        return NVActivityIndicatorType.allCases.filter { $0 != .blank }
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(selectDay)
-        print(selectDay.day)
-        
-        
+       
         // Do any additional setup after loading the view.
+    }
+    func showIndicator() {
+        let size = CGSize(width: 30, height: 30)
+        let indicatorType = presentingIndicatorTypes[1]
+        startAnimating(size, message: "기다려 주세요..", type: indicatorType, fadeInAnimation: nil)
     }
     
     @IBAction func safeAction(_ sender: Any) {
@@ -44,9 +52,8 @@ class ModalViewController: UIViewController {
         periodStartBtn.backgroundColor = grayColor
         unSafeBtn.setTitleColor( .white, for: .normal)
         unSafeBtn.backgroundColor = grayColor
-        safeBtn.setTitleColor(.black, for: .normal)
-        safeBtn.backgroundColor = orangeColor
-        
+        safeBtn.setTitleColor(.white, for: .normal)
+        safeBtn.backgroundColor = pinkColor
     }
     
     
@@ -57,8 +64,8 @@ class ModalViewController: UIViewController {
         periodStartBtn.backgroundColor = grayColor
         safeBtn.setTitleColor( .white, for: .normal)
         safeBtn.backgroundColor = grayColor
-        unSafeBtn.setTitleColor(.black, for: .normal)
-        unSafeBtn.backgroundColor = orangeColor
+        unSafeBtn.setTitleColor(.white, for: .normal)
+        unSafeBtn.backgroundColor = pinkColor
     }
     
     @IBAction func periodStart(_ sender: Any) {
@@ -69,8 +76,8 @@ class ModalViewController: UIViewController {
         unSafeBtn.backgroundColor = grayColor
         periodEndBtn.setTitleColor( .white, for: .normal)
         periodEndBtn.backgroundColor = grayColor
-        periodStartBtn.setTitleColor(.black, for: .normal)
-        periodStartBtn.backgroundColor = orangeColor
+        periodStartBtn.setTitleColor(.white, for: .normal)
+        periodStartBtn.backgroundColor = pinkColor
         
     }
     
@@ -82,8 +89,8 @@ class ModalViewController: UIViewController {
         unSafeBtn.backgroundColor = grayColor
         periodStartBtn.setTitleColor( .white, for: .normal)
         periodStartBtn.backgroundColor = grayColor
-        periodEndBtn.setTitleColor(.black, for: .normal)
-        periodEndBtn.backgroundColor = orangeColor
+        periodEndBtn.setTitleColor(.white, for: .normal)
+        periodEndBtn.backgroundColor = pinkColor
     }
     
     override func viewDidLayoutSubviews() {
@@ -101,29 +108,44 @@ class ModalViewController: UIViewController {
     
     @IBAction func confirmAction(_ sender: Any) {
         //생리  시작 , 끝  통신할 것 .
+        showIndicator()
         sendDate {
+            print("성공")
+            print(self.presentingViewController)
+            if let vc = self.presentingViewController as? CalendarViewController {
+                
+                vc.setPeriod()
+            }
+            
             self.dismiss(animated: true, completion: nil)
         }
     }
     
+    
     func sendDate(completion: @escaping () -> Void) {
+        print("생리 / 섹스 날짜 보내기")
+        let sendDate = selectDay.addingTimeInterval(3600*24)
+        var type = 2
+        if safeBtn.backgroundColor == pinkColor {
+            type = 3
+        } else if unSafeBtn.backgroundColor == pinkColor {
+            type = 4
+        } else {
+            type = 2
+        }
+        
         
         let param : Parameters = ["id":"\(userID)",
-            "type":"\(1)",
-            "year":"\(selectDay.year)",
-            "month":"\(selectDay.month)",
-            "day":"\(selectDay.day)",
+            "type":"\(type)",
+            "year":"\(sendDate.year)",
+            "month":"\(sendDate.month)",
+            "day":"\(sendDate.day)",
             ]
-        print(param)
-        
-        Alamofire.request("http://10.10.2.137:3000/addcalendar", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseJSON { response in
+        Alamofire.request("http://10.10.2.137:3000/addcalendar", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseString { response in
             print(response)
             switch response.result {
             case .success:
-                if let dataFromString = response.result.value {
-                    let json = JSON(dataFromString)
-           
-                }
+                completion()
             case .failure:
                 print("실패")
             }

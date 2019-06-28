@@ -23,10 +23,7 @@ extension CalendarViewController {
         
 
         if seconds == 0 {
-            
             self.setPeriod()
-            self.setBtn()
-            
             //isTimerRunning = false
             seconds = 10
             //timer.invalidate()
