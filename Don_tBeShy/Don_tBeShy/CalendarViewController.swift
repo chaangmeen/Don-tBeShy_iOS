@@ -39,12 +39,16 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     var dayCategory = ""
     var today = Date()
     
+    var statusString : [String] = ["시그널을 연인에게 보내보세요 !", "연인에게 시그널을 보냈어요 !", "연인으로부터 시그널이 도착했어요 !"]
+    
+    
     // 1번 sex , 2번 생리
     var entireDates : [DateData] = [] // 전체 날 모음
     var periodDates : [Date] = []// 생리 한 날 모음
     var sexDates : [Date] = []// 관계 가진 날
     var wrongSexDates : [Date] = []
-    var userID = "kmw811"
+    //var userID = "kmw811"
+    var userID = "aaaa"
     let beforeColor = UIColor(hex: 0xF3FFCB)
     let afterSendColor = UIColor(hex: 0xFFE7C6)
     let afterReceiveColor = UIColor(hex:0xFFCBCB )
@@ -52,6 +56,7 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     override func viewDidLoad() {
         super.viewDidLoad()
         //showAlert(title: "선택", message: "예 => aaaa , 아니요 => kwm811")
+        sexLabel.text = statusString[0]
         calendar.delegate = self
         calendar.dataSource = self
         calendarDefaultSetting()
@@ -88,17 +93,31 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
                     self.processingUnSaftySexData(dataString: dateString)
                 }
                 self.entireDates.append(DateData(state: state, date: dateString, buttonStatus: state))
-                self.calendar.reloadData()
-                self.calendar.allowsMultipleSelection = false
-                self.setBtn()
-                
+               
             }
+            self.calendar.reloadData()
+            self.calendar.allowsMultipleSelection = false
+            self.setBtn()
+            
+            
         }
     }
     
     func setBtn() {
         getBtnStatus { json in
             self.sexState = json["state"].intValue
+            switch self.sexState {
+            case 0 :
+                self.sexLabel.text = self.statusString[0]
+            case 1:
+                self.sexLabel.text = self.statusString[1]
+            case 2:
+                self.sexLabel.text = self.statusString[2]
+            case 3:
+                self.sexLabel.text = "사랑하러가요"
+            default:
+                return
+            }
         }
     }
     
@@ -106,7 +125,10 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
         
         refreshButton.transform = refreshButton.transform.rotated(by: CGFloat(M_PI_2))
         
-        setBtn()
+        setPeriod()
+        
+        
+        
     }
     
     func processingPeriodData(dateString: String) {
@@ -154,9 +176,9 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     func getBtnStatus( completion : @escaping (JSON) -> Void) {
         
         let month = calendar.today?.month
-        print(month)
+        let year = calendar.today?.year
         
-        let param : Parameters = ["id":"\(self.userID)", "year":"2019", "month":"6"]
+        let param : Parameters = ["id":"\(self.userID)", "year":"\(year)", "month":"\(month)"]
         showIndicator()
         Alamofire.request("http://10.10.2.137:3000/btn", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseJSON { response in
             switch response.result {
@@ -175,27 +197,59 @@ class CalendarViewController: UIViewController, NVActivityIndicatorViewable {
     
     @IBAction func sexAction(_ sender: Any) {
         
-        if let imageView = sexButton.imageView {
-            if let image = imageView.image {
-                if image == UIImage(named: "beforeSend") {
-                    sexButton.setImage(UIImage(named: "afterSend"), for: .normal)
-                } else {
-                    sexButton.setImage(UIImage(named: "beforeSend"), for: .normal)
+        
+        sendSexAction(completion: { json in
+            print("버튼 누르고 난 뒤 결과 status")
+            print(json)
+            
+            if let imageView = self.sexButton.imageView {
+                if let image = imageView.image {
+                    if image == UIImage(named: "beforeSend") {
+                       self.sexButton.setImage(UIImage(named: "afterSend"), for: .normal)
+                    } else {
+                        self.sexButton.setImage(UIImage(named: "beforeSend"), for: .normal)
+                    }
                 }
             }
-        }
-        sendSexAction(completion: { json in
-            print(json)
+            
+            
         })
     }
 
     
+    func statusManu(status : Int) {
+        
+        switch status {
+        case 0:
+            self.sexState = 1
+            self.sexLabel.text = statusString[1]
+        case 2:
+            self.sexState = 3
+            self.sexLabel.text = "나도 시그널이 좋아요~"
+        case 3:
+            self.sexState = 4
+            self.sexLabel.text = "사랑하러가요"
+        case 4:
+            print("다된상태일 때 보내는 것")
+            //self.sexState = 0
+        default:
+            return
+        }
+    }
+    
     
     func sendSexAction( completion : @escaping (JSON)-> Void) {
+       
+        if sexState == 1 {
+            return
+        }
         
-        print(" \(userID) 보낼때 status : \(sexState)")
+        statusManu(status: sexState)
         
+        print("버튼 눌렀을때 \(userID) 보낼때 status : \(sexState)")
+
         let param : Parameters = ["id":"\(userID)", "state":"\(self.sexState)"]
+        
         
         Alamofire.request("http://10.10.2.137:3000/btnclick", method: .get, parameters: param, encoding: URLEncoding.default).validate(statusCode: 200..<300).responseJSON { response in
             switch response.result {
